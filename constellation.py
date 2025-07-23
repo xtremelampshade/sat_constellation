@@ -1,23 +1,25 @@
 import math
 from numpy import pi, cos, sin, arccos, arange
-# import mpl_toolkits.mplot3d
-# import matplotlib.pyplot as pp
 
-#Parameters
+# Parameters
 radius_of_earth = 4000 # miles
 altitude_of_satellites = 300 # miles
 valid_satellite_distance = 100000000 # max distance (in miles) that satellites can communicate via VLOS
 
-#Functions
+# Boilerplate Functions
 def dist(x,y):
     distance = math.sqrt(
         ((x[0] - y[0]) * (x[0] - y[0])) +
         ((x[1] - y[1]) * (x[1] - y[1])) +
         ((x[2] - y[2]) * (x[2] - y[2]))
     )
-    if distance < 10000000000:
-        return distance
+    return distance
 
+# This function receives the first and last point to compute the connecting between and check if the earth interferes with
+# the line of sight. It does this by computing the midpoint of the segment connecting them and then calculating the
+# distance between that point and the center of the sphere, which is also the origin. If it is less than the radius of
+# the earth, then it decides the line of sight would be blocked by the earth and therefore returns false. If it is
+# otherwise determined to not be blocked, it returns true.
 def valid_distance(first_id,first,last_id,last):
     line_of_site_barrier = radius_of_earth / (radius_of_earth + altitude_of_satellites)
 
@@ -55,6 +57,9 @@ class fibonacciConstellation():
         self.sphere = self.fibonacci_sphere()
         self.graph = self.get_graph_from_sats(self.get_vis_sat_sets())
 
+    # This attribute simulated "reseeding" of the constellation. If the constellation contains any destroyed satellites,
+    # it prioritizes replacing these satellites first. It then adds new satellites to the constellation by updating the
+    # num_verts attribute. Remember that the graph must be re-generated after reseeding.
     def reseed(self, sats):
         while ((len(self.destroyed) > 0) or (sats > 0)):
             del self.destroyed[0]
@@ -66,7 +71,7 @@ class fibonacciConstellation():
             self.destroyed.append(str(destroyed))
         elif type(destroyed) == list:
             for sat in destroyed:
-                self.destroyed.append(str(destroyed))
+                self.destroyed.append(str(sat))
 
     def fibonacci_sphere(self):
         points = []

@@ -9,4 +9,5 @@ c = fibonacciConstellation(
     jammed = jammed_satellites,
     blocked = blocked_satellite_links
 )
+
 print(c.dist_between_2_nodes(1,467))
